@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Register : Screen("register")
+    object Home : Screen("home")
 }
 
 @Composable
@@ -25,6 +26,11 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         composable(Screen.Login.route) {
             LoginScreen(
                 onRegisterClick = { navController.navigate(Screen.Register.route) },
+                onLoginSuccess = {
+                    navController.navigate("home") {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
                 viewModel = mainViewModel
             )
         }
@@ -35,6 +41,10 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 onBackClick = { navController.popBackStack() },
                 viewModel = mainViewModel
             )
+        }
+
+        composable(Screen.Home.route) {
+            HomeScreen()
         }
     }
 }

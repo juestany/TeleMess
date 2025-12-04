@@ -11,15 +11,11 @@ import kotlinx.coroutines.launch
 class UserRepository(private val userDAO: UserDAO) {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    fun insertUser(newUser: User) {
-        coroutineScope.launch(Dispatchers.IO) {
-            userDAO.insertUser(newUser)
-        }
+    suspend fun insertUser(newUser: User) {
+        userDAO.insertUser(newUser)
     }
 
-    fun getUser(name: String, password: String) {
-        coroutineScope.launch(Dispatchers.Main) {
-            userDAO.getUser(name, password)
-        }
+    suspend fun getUser(username: String, password: String): User? {
+        return userDAO.getUser(username, password)
     }
 }
