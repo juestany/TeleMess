@@ -24,22 +24,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lint.kotlin.metadata.Visibility
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.telemess.user.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: MainViewModel = viewModel()
 ) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -87,29 +87,29 @@ fun RegisterScreen(
                 label = { Text("Password") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation =
-                    if (passwordVisible) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-//                        Icon(
-//                            imageVector = if (passwordVisible)
-//                                Icons.Filled.Visibility
-//                            else Icons.Filled.VisibilityOff,
-//                            contentDescription = null
-//                        )
-                    }
-                }
+                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = { /* TODO: call ViewModel register */ },
+                onClick = {
+                    val user = User(
+                        username = username,
+                        email = email,
+                        password = password
+                    )
+                    viewModel.insertUser(user)
+                    onBackClick() // return to Login
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Create account")
             }
         }
     }
+}
+
+fun print() {
+    print("gugu")
 }

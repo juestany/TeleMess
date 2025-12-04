@@ -27,16 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lint.kotlin.metadata.Visibility
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    viewModel: MainViewModel = viewModel()
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -67,19 +67,7 @@ fun LoginScreen(
                 label = { Text("Password") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation =
-                    if (passwordVisible) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-//                        Icon(
-//                            imageVector = if (passwordVisible)
-//                                Icons.Default.
-//                            else Icons.Default,
-//                            contentDescription = null
-//                        )
-                    }
-                }
+                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(Modifier.height(24.dp))

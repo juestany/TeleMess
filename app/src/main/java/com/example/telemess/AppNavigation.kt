@@ -1,6 +1,7 @@
 package com.example.telemess
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +15,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(navController: NavHostController = rememberNavController()) {
 
+    val mainViewModel: MainViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Login.route
@@ -22,14 +24,16 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         // Login → Register navigation
         composable(Screen.Login.route) {
             LoginScreen(
-                onRegisterClick = { navController.navigate(Screen.Register.route) }
+                onRegisterClick = { navController.navigate(Screen.Register.route) },
+                viewModel = mainViewModel
             )
         }
 
         // Register → Back to Login
         composable(Screen.Register.route) {
             RegisterScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                viewModel = mainViewModel
             )
         }
     }
