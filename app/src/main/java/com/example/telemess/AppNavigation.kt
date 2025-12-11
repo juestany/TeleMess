@@ -22,7 +22,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         startDestination = Screen.Login.route
     ) {
 
-        // Login → Register navigation
+        // Login, register navigation
         composable(Screen.Login.route) {
             LoginScreen(
                 onRegisterClick = { navController.navigate(Screen.Register.route) },
@@ -35,7 +35,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             )
         }
 
-        // Register → Back to Login
+        // Register, back to login
         composable(Screen.Register.route) {
             RegisterScreen(
                 onBackClick = { navController.popBackStack() },

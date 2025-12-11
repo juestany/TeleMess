@@ -109,7 +109,3 @@ fun RegisterScreen(
         }
     }
 }
-
-fun print() {
-    print("gugu")
-}
