@@ -47,7 +47,7 @@ class MessagesCallsService : Service() {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     // call ended
                     if (!callAnswered) {
-                        // call ended and was missed → try reading last missed call
+                        // call ended or was missed
                         val number = getLastMissedCallNumber(this@MessagesCallsService)
                         Log.d("Service", "Missed call number from CallLog: '$number'")
                         if (!number.isNullOrBlank()) {

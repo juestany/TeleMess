@@ -20,7 +20,7 @@ fun HomeScreen() {
         }
 
         Column {
-            Text("Welcome home!")
+            Text("home")
         }
         // ACTION_RESPOND_VIA_MESSAGE
         // SEND_RESPOND_VIA_MESSAGE
