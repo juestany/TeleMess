@@ -42,12 +42,15 @@ android {
 
 dependencies {
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.material3)
     val room_version = "2.8.4"
     val lifecycle_version = "2.7.0"
 
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
 

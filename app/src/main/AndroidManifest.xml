@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TeleMess">
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.TeleMess">
@@ -27,9 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".MessagesCallsService"
-            android:exported="false" >
-        </service>
     </application>
 
 </manifest>
