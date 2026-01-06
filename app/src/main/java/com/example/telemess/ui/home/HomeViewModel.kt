@@ -1,20 +1,41 @@
 package com.example.telemess.ui.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.telemess.data.model.CallType
+import com.example.telemess.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class HomeScreenViewModel : ViewModel() {
+//private var Any.value: Boolean
+//private val HomeScreenViewModel._autoSmsEnabled: Any
+
+class HomeScreenViewModel(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     private val _quietHoursEnabled = MutableStateFlow(true)
     val quietHoursEnabled: StateFlow<Boolean> = _quietHoursEnabled
+
+    // --- SMS settings from QuietHours ---
+    private val _smsTemplate = MutableStateFlow("")
+    val smsTemplate: StateFlow<String> = _smsTemplate
 
     private val _message = MutableStateFlow("")
     val message: StateFlow<String> = _message
 
     private val _sendSmsEnabled = MutableStateFlow(false)
-    val sendSmsEnabled: StateFlow<Boolean> = _sendSmsEnabled
+    val autoSmsEnabled: StateFlow<Boolean> = _sendSmsEnabled
+
+    init {
+        viewModelScope.launch {
+            val settings = settingsRepository.getOrCreateDefault()
+            _quietHoursEnabled.value = settings.isEnabled
+            _smsTemplate.value = settings.smsTemplate
+            _autoSmsEnabled.value = settings.isAutoSmsEnabled
+        }
+    }
 
     private val _missedCalls = MutableStateFlow(
         listOf(
@@ -34,19 +55,39 @@ class HomeScreenViewModel : ViewModel() {
             )
         )
     )
-    val missedCalls: StateFlow<List<HomeMissedCallUi>> = _missedCalls
+
+    fun updateSmsTemplate(text: String) {
+        _smsTemplate.value = text
+        viewModelScope.launch {
+            settingsRepository.saveSettings(
+                settingsRepository.getOrCreateDefault().copy(
+                    smsTemplate = text
+                )
+            )
+        }
+    }
+
+    fun toggleAutoSms() {
+        _autoSmsEnabled.value = !_autoSmsEnabled.value
+        viewModelScope.launch {
+            val settings = settingsRepository.getOrCreateDefault()
+            settingsRepository.saveSettings(
+                settings.copy(isAutoSmsEnabled = _autoSmsEnabled.value)
+            )
+        }
+    }
 
     fun toggleQuietHours(enabled: Boolean) {
         _quietHoursEnabled.value = enabled
+        viewModelScope.launch {
+            val settings = settingsRepository.getOrCreateDefault()
+            settingsRepository.saveSettings(
+                settings.copy(isEnabled = enabled)
+            )
+        }
     }
 
-    fun updateMessage(text: String) {
-        _message.value = text
-    }
-
-    fun toggleSendSms() {
-        _sendSmsEnabled.value = !_sendSmsEnabled.value
-    }
+    val missedCalls: StateFlow<List<HomeMissedCallUi>> = _missedCalls
 
     fun markAsRead(callId: Int) {
         _missedCalls.value = _missedCalls.value.map {
