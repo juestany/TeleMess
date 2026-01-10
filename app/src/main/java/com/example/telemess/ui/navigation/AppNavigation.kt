@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import com.example.telemess.data.db.AppDatabase
 import com.example.telemess.data.repository.SettingsRepository
 import com.example.telemess.ui.home.HomeScreen
 import com.example.telemess.ui.home.HomeScreenViewModel
+import com.example.telemess.ui.home.HomeScreenViewModelFactory
 import com.example.telemess.ui.permissions.PermissionsScreen
 import com.example.telemess.ui.quiet.QuietHoursScreen
 
@@ -47,7 +49,13 @@ fun AppNavigation() {
     val repo = remember {
         SettingsRepository(AppDatabase.getInstance(context).quietHoursDao())
     }
-    val viewModel: HomeScreenViewModel = viewModel()
+    val homeViewModel: HomeScreenViewModel = viewModel(
+        factory = HomeScreenViewModelFactory(repo)
+    )
+
+    LaunchedEffect(Unit) {
+        repo.getOrCreateDefault()
+    }
 
     Scaffold(
         topBar = {
@@ -55,8 +63,8 @@ fun AppNavigation() {
                 title = { Text("Quiet Hours") },
                 actions = {
                     Switch(
-                        checked = viewModel.quietHoursEnabled.collectAsState().value,
-                        onCheckedChange = viewModel::toggleQuietHours
+                        checked = homeViewModel.quietHoursEnabled.collectAsState().value,
+                        onCheckedChange = homeViewModel::toggleQuietHours
                     )
                 }
             )
@@ -70,7 +78,7 @@ fun AppNavigation() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { HomeScreen(viewModel) }
+            composable(Screen.Home.route) { HomeScreen(homeViewModel) }
             composable(Screen.QuietHours.route) { QuietHoursScreen(repository = repo) }
             composable(Screen.Permissions.route) { PermissionsScreen() }
         }

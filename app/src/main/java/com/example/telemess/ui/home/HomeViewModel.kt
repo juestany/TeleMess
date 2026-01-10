@@ -5,37 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.telemess.data.model.CallType
 import com.example.telemess.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
-//private var Any.value: Boolean
-//private val HomeScreenViewModel._autoSmsEnabled: Any
 
 class HomeScreenViewModel(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _quietHoursEnabled = MutableStateFlow(true)
-    val quietHoursEnabled: StateFlow<Boolean> = _quietHoursEnabled
-
-    // --- SMS settings from QuietHours ---
-    private val _smsTemplate = MutableStateFlow("")
-    val smsTemplate: StateFlow<String> = _smsTemplate
-
-    private val _message = MutableStateFlow("")
-    val message: StateFlow<String> = _message
-
-    private val _sendSmsEnabled = MutableStateFlow(false)
-    val autoSmsEnabled: StateFlow<Boolean> = _sendSmsEnabled
-
-    init {
-        viewModelScope.launch {
-            val settings = settingsRepository.getOrCreateDefault()
-            _quietHoursEnabled.value = settings.isEnabled
-            _smsTemplate.value = settings.smsTemplate
-            _autoSmsEnabled.value = settings.isAutoSmsEnabled
-        }
-    }
+    val quietHoursEnabled: StateFlow<Boolean> =
+        settingsRepository.observeSettings()
+            .map { it?.isEnabled ?: true }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
     private val _missedCalls = MutableStateFlow(
         listOf(
@@ -56,34 +39,10 @@ class HomeScreenViewModel(
         )
     )
 
-    fun updateSmsTemplate(text: String) {
-        _smsTemplate.value = text
-        viewModelScope.launch {
-            settingsRepository.saveSettings(
-                settingsRepository.getOrCreateDefault().copy(
-                    smsTemplate = text
-                )
-            )
-        }
-    }
-
-    fun toggleAutoSms() {
-        _autoSmsEnabled.value = !_autoSmsEnabled.value
-        viewModelScope.launch {
-            val settings = settingsRepository.getOrCreateDefault()
-            settingsRepository.saveSettings(
-                settings.copy(isAutoSmsEnabled = _autoSmsEnabled.value)
-            )
-        }
-    }
-
     fun toggleQuietHours(enabled: Boolean) {
-        _quietHoursEnabled.value = enabled
         viewModelScope.launch {
             val settings = settingsRepository.getOrCreateDefault()
-            settingsRepository.saveSettings(
-                settings.copy(isEnabled = enabled)
-            )
+            settingsRepository.saveSettings(settings.copy(isEnabled = enabled))
         }
     }
 

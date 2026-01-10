@@ -1,5 +1,6 @@
 package com.example.telemess.data.repository
 
+import android.util.Log
 import com.example.telemess.data.db.QuietHoursDAO
 import com.example.telemess.data.model.QuietHoursSettings
 import com.example.telemess.ui.quiet.QuietHoursUiState
@@ -9,9 +10,7 @@ class SettingsRepository(
     private val quietHoursDao: QuietHoursDAO
 ) {
 
-    fun observeSettings(): Flow<QuietHoursSettings?> {
-        return quietHoursDao.observeSettings()
-    }
+    fun observeSettings() = quietHoursDao.observeSettings()
 
     suspend fun getSettings(): QuietHoursSettings? {
         return quietHoursDao.getSettings()
@@ -29,15 +28,19 @@ class SettingsRepository(
      * Returns settings or default values if not yet created.
      */
     suspend fun getOrCreateDefault(): QuietHoursSettings {
+        val existing = quietHoursDao.getSettings()
+        Log.d("DB", "Loaded settings: $existing")
+
+        if (existing != null) return existing
         return getSettings() ?: QuietHoursSettings(
             id = 0,
-            isEnabled = false,
+            isEnabled = true,
             startHour = 22,
             startMinute = 0,
             endHour = 7,
             endMinute = 0,
-            isAutoSmsEnabled = true,
-            smsTemplate = "I'll call u later"
+            isAutoSmsEnabled = false,
+            smsTemplate = ""
         ).also {
             saveSettings(it)
         }

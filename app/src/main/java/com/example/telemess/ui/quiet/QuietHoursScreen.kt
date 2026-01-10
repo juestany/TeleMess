@@ -4,12 +4,14 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,8 @@ fun QuietHoursScreen(
     val factory = remember { QuietHoursViewModelFactory(repository) }
     val viewModel: QuietHoursViewModel = viewModel(factory = factory)
     val uiState by viewModel.uiState.collectAsState()
+    val smsTemplate by viewModel.smsTemplate.collectAsState()
+    val autoSmsEnabled by viewModel.autoSmsEnabled.collectAsState()
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
 
@@ -68,12 +73,31 @@ fun QuietHoursScreen(
                 }
         )
 
+        OutlinedTextField(
+            value = smsTemplate,
+            onValueChange = viewModel::updateSmsTemplate,
+            label = { Text("Enter a message") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = autoSmsEnabled,
+                onClick = viewModel::toggleAutoSms
+            )
+            Text("Send SMS messages")
+        }
+
         // BUTTON
         Button(
-            onClick = { viewModel.saveSettings() }, // implement save logic in VM
+            onClick = { viewModel.saveSettings() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Set Quiet Hours Time")
+            Text("Set Quiet Hours")
         }
     }
 

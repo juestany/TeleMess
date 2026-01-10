@@ -28,17 +28,49 @@ class QuietHoursViewModel(
         }
     }
 
+    // --- SMS settings from QuietHours ---
+    private val _smsTemplate = MutableStateFlow("")
+    val smsTemplate: StateFlow<String> = _smsTemplate
+
+    private val _message = MutableStateFlow("")
+    val message: StateFlow<String> = _message
+
+    private val _autoSmsEnabled = MutableStateFlow(false)
+    val autoSmsEnabled: StateFlow<Boolean> = _autoSmsEnabled
+
+    init {
+        viewModelScope.launch {
+            val settings = settingsRepository.getOrCreateDefault()
+            _smsTemplate.value = settings.smsTemplate
+            _autoSmsEnabled.value = settings.isAutoSmsEnabled
+        }
+    }
+
+    fun updateSmsTemplate(text: String) {
+        _smsTemplate.value = text
+        viewModelScope.launch {
+            settingsRepository.saveSettings(
+                settingsRepository.getOrCreateDefault().copy(
+                    smsTemplate = text
+                )
+            )
+        }
+    }
+
+    fun toggleAutoSms() {
+        _autoSmsEnabled.value = !_autoSmsEnabled.value
+        viewModelScope.launch {
+            val settings = settingsRepository.getOrCreateDefault()
+            settingsRepository.saveSettings(
+                settings.copy(isAutoSmsEnabled = _autoSmsEnabled.value)
+            )
+        }
+    }
+
     // --- UI actions ---
-
-    fun toggleEnabled(enabled: Boolean) = updateState { copy(enabled = enabled) }
-
     fun updateStartTime(hour: Int, minute: Int) = updateState { copy(startHour = hour, startMinute = minute) }
 
     fun updateEndTime(hour: Int, minute: Int) = updateState { copy(endHour = hour, endMinute = minute) }
-
-    fun toggleAutoSms(enabled: Boolean) = updateState { copy(autoSmsEnabled = enabled) }
-
-    fun updateSmsTemplate(text: String) = updateState { copy(smsTemplate = text) }
 
     fun saveSettings() {
         viewModelScope.launch {

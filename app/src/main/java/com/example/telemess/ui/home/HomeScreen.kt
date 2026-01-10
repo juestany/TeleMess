@@ -21,9 +21,7 @@ import java.util.*
 fun HomeScreen(
     viewModel: HomeScreenViewModel
 ) {
-    val smsTemplate by viewModel.smsTemplate.collectAsState()
     val missedCalls by viewModel.missedCalls.collectAsState()
-    val autoSmsEnabled by viewModel.autoSmsEnabled.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -36,29 +34,6 @@ fun HomeScreen(
         ) {
             items(missedCalls) { call ->
                 MissedCallItem(call = call, onRead = viewModel::markAsRead)
-            }
-
-            item {
-                OutlinedTextField(
-                    value = smsTemplate,
-                    onValueChange = viewModel::updateSmsTemplate,
-                    label = { Text("Enter a message") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
-            }
-
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = autoSmsEnabled,
-                        onClick = viewModel::toggleAutoSms
-                    )
-                    Text("Send SMS messages")
-                }
             }
         }
     }
