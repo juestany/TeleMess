@@ -46,8 +46,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.compose.foundation)
+//    implementation(libs.androidx.compiler)
     val room_version = "2.8.4"
     val lifecycle_version = "2.7.0"
+//    implementation("com.google.guava:guava:23.0") {exclude group: "com.google.guava", module: "listenablefuture" }
 
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")

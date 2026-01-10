@@ -1,15 +1,34 @@
 package com.example.telemess.ui.permissions
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
-class PermissionsViewModel : ViewModel() {
-    var refreshTrigger by mutableStateOf(0)
-        private set
+class PermissionsViewModel(
+    private val context: Context
+) : ViewModel() {
+
+    val readCallLogGranted = MutableStateFlow(false)
+    val readPhoneStateGranted = MutableStateFlow(false)
+    val sendSmsGranted = MutableStateFlow(false)
 
     fun refresh() {
-        refreshTrigger++
+        readCallLogGranted.value =
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_CALL_LOG
+            ) == PackageManager.PERMISSION_GRANTED
+
+        readPhoneStateGranted.value =
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED
+
+        sendSmsGranted.value =
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
     }
 }
