@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.compose.foundation)
     val room_version = "2.8.4"
     val lifecycle_version = "2.7.0"
 
