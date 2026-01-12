@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "missed_calls")
 data class MissedCallEntity (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "missedCallId")
-    val id: Int,
+    val id: Long = 0L,
 
     @ColumnInfo(name = "phoneNumber")
     val phoneNumber: String,

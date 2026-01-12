@@ -17,6 +17,9 @@ interface MissedCallDAO {
     @Delete
     suspend fun deleteMissedCall(missedCall: MissedCallEntity)
 
+    @Query("SELECT * FROM missed_calls WHERE timestamp = :timestamp LIMIT 1")
+    suspend fun getByTimestamp(timestamp: Long): MissedCallEntity?
+
     @Query("""
         SELECT * FROM missed_calls
         WHERE missedCallId = :missedCallId

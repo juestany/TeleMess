@@ -13,27 +13,77 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.telemess.domain.model.IncomingCallEvent
+import com.example.telemess.domain.model.MissedCallProcessor
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel
+    viewModel: HomeScreenViewModel,
+    processor: MissedCallProcessor
 ) {
     val missedCalls by viewModel.missedCalls.collectAsState()
+    val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        /* CONTENT */
         LazyColumn(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(missedCalls) { call ->
                 MissedCallItem(call = call, onRead = viewModel::markAsRead)
+            }
+        }
+
+        /* DEBUG SECTION */
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Debug Calls", style = MaterialTheme.typography.titleMedium)
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        processor.handleCall(
+                            IncomingCallEvent(
+                                phoneNumber = "+48123123123",
+                                wasAnswered = false
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Simulate missed call")
+            }
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        processor.handleCall(
+                            IncomingCallEvent(
+                                phoneNumber = "+48999888777",
+                                wasAnswered = false,
+                                wasRejected = true
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Simulate rejected call")
             }
         }
     }

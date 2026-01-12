@@ -13,7 +13,7 @@ import com.example.telemess.data.model.QuietHoursSettings
         MissedCallEntity::class,
         QuietHoursSettings::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(CallTypeConverter::class)

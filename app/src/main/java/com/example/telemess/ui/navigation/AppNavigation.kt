@@ -28,6 +28,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.telemess.data.db.AppDatabase
 import com.example.telemess.data.repository.SettingsRepository
+import com.example.telemess.domain.model.MissedCallProcessor
+import com.example.telemess.sms.FakeSmsSender
 import com.example.telemess.ui.home.HomeScreen
 import com.example.telemess.ui.home.HomeScreenViewModel
 import com.example.telemess.ui.home.HomeScreenViewModelFactory
@@ -52,6 +54,15 @@ fun AppNavigation() {
     val homeViewModel: HomeScreenViewModel = viewModel(
         factory = HomeScreenViewModelFactory(repo)
     )
+
+    val db = AppDatabase.getInstance(context)
+    val processor = remember {
+        MissedCallProcessor(
+            db,
+            SettingsRepository(db.quietHoursDao()),
+            FakeSmsSender()
+        )
+    }
 
     LaunchedEffect(Unit) {
         repo.getOrCreateDefault()
@@ -78,7 +89,7 @@ fun AppNavigation() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { HomeScreen(homeViewModel) }
+            composable(Screen.Home.route) { HomeScreen(homeViewModel, processor) }
             composable(Screen.QuietHours.route) { QuietHoursScreen(repository = repo) }
             composable(Screen.Permissions.route) { PermissionsScreen() }
         }
