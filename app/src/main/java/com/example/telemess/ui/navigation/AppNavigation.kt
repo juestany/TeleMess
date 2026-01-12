@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.telemess.data.db.AppDatabase
 import com.example.telemess.data.repository.SettingsRepository
 import com.example.telemess.domain.model.MissedCallProcessor
+import com.example.telemess.sms.AndroidSmsSender
 import com.example.telemess.sms.FakeSmsSender
 import com.example.telemess.ui.home.HomeScreen
 import com.example.telemess.ui.home.HomeScreenViewModel
@@ -53,7 +54,7 @@ fun AppNavigation() {
     val db = remember { AppDatabase.getInstance(context) }
     val settingsRepository = remember { SettingsRepository(db.quietHoursDao()) }
     val callRepository = remember { com.example.telemess.data.repository.CallRepository(db.missedCallDao()) }
-    val smsSender = remember { FakeSmsSender() } // Use real AndroidSmsSender() on device
+    val smsSender = remember { AndroidSmsSender() } // Use real AndroidSmsSender() on device
     val processor = remember { MissedCallProcessor(db, settingsRepository, smsSender) }
 
     // --- Home ViewModel ---
