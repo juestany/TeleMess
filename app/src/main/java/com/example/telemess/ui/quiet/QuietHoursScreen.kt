@@ -110,7 +110,6 @@ fun QuietHoursScreen(
             ).show()
         }
     }
-// TODO: time validation. end time can't be earlier than start time etc
     // END TIME PICKER
     if (showEndTimePicker) {
         LaunchedEffect(Unit) {

@@ -15,7 +15,7 @@ class CallRepository(private val missedCallDAO: MissedCallDAO) {
         missedCallDAO.deleteMissedCall(missedCall)
     }
 
-    suspend fun getMissedCallById(missedCallId: Int): MissedCallEntity? {
+    suspend fun getMissedCallById(missedCallId: Long): MissedCallEntity? {
         return missedCallDAO.getMissedCallById(missedCallId)
     }
 

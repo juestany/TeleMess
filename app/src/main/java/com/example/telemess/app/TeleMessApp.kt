@@ -43,7 +43,7 @@ class TeleMessApp {
 //    │   │
 //    │   ├── home
 //    │   │   ├── HomeScreen.kt
-//    │   │   └── HomeViewModel.kt
+//    │   │   └── HomeScreenViewModel.kt
 //    │   │
 //    │   ├── quiet
 //    │   │   ├── QuietHoursScreen.kt

@@ -25,7 +25,7 @@ interface MissedCallDAO {
         WHERE missedCallId = :missedCallId
         LIMIT 1
     """)
-    suspend fun getMissedCallById(missedCallId: Int): MissedCallEntity?
+    suspend fun getMissedCallById(missedCallId: Long): MissedCallEntity?
 
     @Query("""
         SELECT * FROM missed_calls

@@ -15,6 +15,23 @@ class HomeScreenViewModel(
     private val callRepository: CallRepository
 ) : ViewModel() {
 
+    private val seenOnce = mutableSetOf<Long>()
+
+    fun markAsViewed(callId: Long) {
+        viewModelScope.launch {
+            val call = callRepository.getMissedCallById(callId)
+            if (call != null) {
+                // If already seen once, mark as displayed in DB (badge gone)
+                if (seenOnce.contains(callId)) {
+                    callRepository.markCallsAsDisplayed(listOf(call.id))
+                } else {
+                    // Otherwise, just track it as seen once
+                    seenOnce.add(callId)
+                }
+            }
+        }
+    }
+
     val quietHoursEnabled: StateFlow<Boolean> =
         settingsRepository.observeSettings()
             .map { it?.isEnabled ?: true }
@@ -28,9 +45,18 @@ class HomeScreenViewModel(
     // Mark as read in DB
     fun markAsRead(callId: Int) {
         viewModelScope.launch {
-            val call = callRepository.getMissedCallById(callId)
+            val call = callRepository.getMissedCallById(callId.toLong())
             if (call != null && !call.displayedToUser) {
                 callRepository.markCallsAsDisplayed(listOf(call.id))
+            }
+        }
+    }
+
+    fun deleteCall(callId: Int) {
+        viewModelScope.launch {
+            val call = callRepository.getMissedCallById(callId.toLong())
+            if (call != null) {
+                callRepository.deleteMissedCall(call)
             }
         }
     }

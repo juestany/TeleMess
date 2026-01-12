@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallMissed
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,7 +39,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(missedCalls) { call ->
-                MissedCallItem(call = call, onRead = viewModel::markAsRead)
+                MissedCallItem(call = call, viewModel, onDelete = { id -> viewModel.deleteCall(id) })
             }
         }
 
@@ -92,12 +93,13 @@ fun HomeScreen(
 @Composable
 fun MissedCallItem(
     call: HomeMissedCallUi,
-    onRead: (Int) -> Unit
-) { //TODO: auto-mark as seen when seen
+    viewModel: HomeScreenViewModel,
+    onDelete: (Int) -> Unit
+) {
 
     LaunchedEffect(call.id) {
         if (call.isNew) {
-            onRead(call.id.toInt())
+            viewModel.markAsViewed(call.id)
         }
     }
 
@@ -111,9 +113,11 @@ fun MissedCallItem(
         com.example.telemess.data.model.CallType.MISSED -> "Call missed"
     }
 
-    Box {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        // Main Card with info + delete button
         Card(
-            modifier = Modifier.fillMaxWidth().clickable { onRead(call.id.toInt()) },
+            modifier = Modifier
+                .fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(
@@ -131,12 +135,17 @@ fun MissedCallItem(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(call.phoneNumber, style = MaterialTheme.typography.bodyLarge)
                     Text(subtitle, style = MaterialTheme.typography.bodyMedium)
-                    Text(
-                        formatter.format(Date(call.timestamp)),
-                        style = MaterialTheme.typography.bodySmall
+                    Text(formatter.format(Date(call.timestamp)), style = MaterialTheme.typography.bodySmall)
+                }
+
+                IconButton(onClick = { onDelete(call.id.toInt()) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -148,8 +157,8 @@ fun MissedCallItem(
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .align(Alignment.TopStart)
+                    .offset(x = 8.dp, y = (-4).dp)
                     .background(
                         MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(8.dp)
