@@ -23,7 +23,7 @@ import java.util.*
 @Composable
 fun HomeScreen(
     viewModel: HomeScreenViewModel,
-    processor: MissedCallProcessor
+    processor: MissedCallProcessor,
 ) {
     val missedCalls by viewModel.missedCalls.collectAsState()
     val scope = rememberCoroutineScope()
@@ -95,20 +95,25 @@ fun MissedCallItem(
     onRead: (Int) -> Unit
 ) { //TODO: auto-mark as seen when seen
 
+    LaunchedEffect(call.id) {
+        if (call.isNew) {
+            onRead(call.id.toInt())
+        }
+    }
+
     val formatter = remember {
         SimpleDateFormat("dd MMM • HH:mm", Locale.getDefault())
     }
 
     val subtitle = when (call.callType) {
-        com.example.telemess.data.model.CallType.REJECTED_QUIET_HOURS ->
-            "Missed call – Quiet Hours"
-        else ->
-            "Call rejected"
+        com.example.telemess.data.model.CallType.REJECTED_QUIET_HOURS -> "Rejected call – Quiet Hours"
+        com.example.telemess.data.model.CallType.REJECTED_MANUALLY -> "Rejected manually"
+        com.example.telemess.data.model.CallType.MISSED -> "Call missed"
     }
 
     Box {
         Card(
-            modifier = Modifier.fillMaxWidth().clickable { onRead(call.id) },
+            modifier = Modifier.fillMaxWidth().clickable { onRead(call.id.toInt()) },
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(

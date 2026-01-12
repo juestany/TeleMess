@@ -91,14 +91,6 @@ fun QuietHoursScreen(
             )
             Text("Send SMS messages")
         }
-
-        // BUTTON
-        Button(
-            onClick = { viewModel.saveSettings() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Set Quiet Hours")
-        }
     }
 
     val context = LocalContext.current

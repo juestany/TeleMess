@@ -1,5 +1,6 @@
 package com.example.telemess.domain.model
 
+import android.util.Log
 import com.example.telemess.data.db.AppDatabase
 import com.example.telemess.data.model.CallType
 import com.example.telemess.data.model.MissedCallEntity
@@ -29,16 +30,20 @@ class MissedCallProcessor(
             currentMinutes >= startMinutes || currentMinutes < endMinutes
         }
 
+        var smsSent = false
+        if (inQuietHours && settings.isAutoSmsEnabled) {
+            try {
+                smsSender.send(event.phoneNumber, settings.smsTemplate)
+                smsSent = true
+            } catch (e: Exception) {
+                Log.e("MissedCallProcessor", "Failed to send SMS: ${e.message}")
+            }
+        }
+
         val callType = when {
             event.wasRejected && inQuietHours -> CallType.REJECTED_QUIET_HOURS
             event.wasRejected -> CallType.REJECTED_MANUALLY
             else -> CallType.MISSED
-        }
-
-        var smsSent = false
-        if (inQuietHours && settings.isAutoSmsEnabled) {
-            smsSender.send(event.phoneNumber, settings.smsTemplate)
-            smsSent = true
         }
 
         db.missedCallDao().insertMissedCall(

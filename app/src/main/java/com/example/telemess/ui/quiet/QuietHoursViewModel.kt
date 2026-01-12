@@ -19,6 +19,9 @@ class QuietHoursViewModel(
 
     init {
         loadSettings()
+//        viewModelScope.launch {
+//            _uiState.collect { settingsRepository.saveSettings(it.toEntity()) }
+//        }
     }
 
     private fun loadSettings() {
@@ -71,12 +74,6 @@ class QuietHoursViewModel(
     fun updateStartTime(hour: Int, minute: Int) = updateState { copy(startHour = hour, startMinute = minute) }
 
     fun updateEndTime(hour: Int, minute: Int) = updateState { copy(endHour = hour, endMinute = minute) }
-
-    fun saveSettings() {
-        viewModelScope.launch {
-            settingsRepository.saveSettings(_uiState.value.toEntity())
-        }
-    }
 
     // --- Helpers ---
 

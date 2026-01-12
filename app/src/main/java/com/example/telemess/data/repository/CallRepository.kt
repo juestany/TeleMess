@@ -1,13 +1,10 @@
 package com.example.telemess.data.repository
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
 import com.example.telemess.data.db.MissedCallDAO
 import com.example.telemess.data.model.CallType
 import com.example.telemess.data.model.MissedCallEntity
-import kotlinx.coroutines.flow.Flow
+import com.example.telemess.ui.home.HomeMissedCallUi
+import kotlinx.coroutines.flow.map
 
 class CallRepository(private val missedCallDAO: MissedCallDAO) {
     suspend fun insertMissedCall(newMissedCall: MissedCallEntity) {
@@ -22,15 +19,11 @@ class CallRepository(private val missedCallDAO: MissedCallDAO) {
         return missedCallDAO.getMissedCallById(missedCallId)
     }
 
-    fun observeAllMissedCalls(): Flow<List<MissedCallEntity>> {
-        return missedCallDAO.observeAllMissedCalls()
-    }
-
     suspend fun getUndisplayedCalls(): List<MissedCallEntity> {
         return missedCallDAO.getUndisplayedCalls()
     }
 
-    suspend fun markCallsAsDisplayed(ids: List<Int>) {
+    suspend fun markCallsAsDisplayed(ids: List<Long>) {
         missedCallDAO.markCallsAsDisplayed(ids)
     }
 
@@ -52,4 +45,19 @@ class CallRepository(private val missedCallDAO: MissedCallDAO) {
             )
         )
     }
+
+    // Flow of all calls in descending timestamp order
+    fun observeAllMissedCalls() = missedCallDAO.observeAllMissedCalls()
+        .map { list ->
+            // convert MissedCallEntity → HomeMissedCallUi
+            list.map {
+                HomeMissedCallUi(
+                    id = it.id,
+                    phoneNumber = it.phoneNumber,
+                    timestamp = it.timestamp,
+                    callType = it.callType,
+                    isNew = !it.displayedToUser
+                )
+            }
+        }
 }

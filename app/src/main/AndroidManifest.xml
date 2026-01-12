@@ -28,11 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.MissedCallProcessorService"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_SCREENING_SERVICE"
-            android:exported="false" >
-        </service>
     </application>
 
 </manifest>

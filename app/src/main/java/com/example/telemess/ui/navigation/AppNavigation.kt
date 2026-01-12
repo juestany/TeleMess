@@ -48,24 +48,21 @@ sealed class Screen(val route: String, val icon: ImageVector, val label: String)
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val repo = remember {
-        SettingsRepository(AppDatabase.getInstance(context).quietHoursDao())
-    }
+
+    // --- Repositories and Processor ---
+    val db = remember { AppDatabase.getInstance(context) }
+    val settingsRepository = remember { SettingsRepository(db.quietHoursDao()) }
+    val callRepository = remember { com.example.telemess.data.repository.CallRepository(db.missedCallDao()) }
+    val smsSender = remember { FakeSmsSender() } // Use real AndroidSmsSender() on device
+    val processor = remember { MissedCallProcessor(db, settingsRepository, smsSender) }
+
+    // --- Home ViewModel ---
     val homeViewModel: HomeScreenViewModel = viewModel(
-        factory = HomeScreenViewModelFactory(repo)
+        factory = HomeScreenViewModelFactory(settingsRepository, callRepository)
     )
 
-    val db = AppDatabase.getInstance(context)
-    val processor = remember {
-        MissedCallProcessor(
-            db,
-            SettingsRepository(db.quietHoursDao()),
-            FakeSmsSender()
-        )
-    }
-
     LaunchedEffect(Unit) {
-        repo.getOrCreateDefault()
+        settingsRepository.getOrCreateDefault() // preload DB
     }
 
     Scaffold(
@@ -90,7 +87,7 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) { HomeScreen(homeViewModel, processor) }
-            composable(Screen.QuietHours.route) { QuietHoursScreen(repository = repo) }
+            composable(Screen.QuietHours.route) { QuietHoursScreen(repository = settingsRepository) }
             composable(Screen.Permissions.route) { PermissionsScreen() }
         }
     }

@@ -45,5 +45,5 @@ interface MissedCallDAO {
         SET displayedToUser = 1
         WHERE missedCallId IN (:ids)
     """)
-    suspend fun markCallsAsDisplayed(ids: List<Int>)
+    suspend fun markCallsAsDisplayed(ids: List<Long>)
 }
