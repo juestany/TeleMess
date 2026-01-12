@@ -1,4 +1,4 @@
-package com.example.telemess.domain.model
+package com.example.telemess.model
 
 import android.util.Log
 import com.example.telemess.data.db.AppDatabase

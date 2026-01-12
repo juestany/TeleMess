@@ -19,9 +19,6 @@ class QuietHoursViewModel(
 
     init {
         loadSettings()
-//        viewModelScope.launch {
-//            _uiState.collect { settingsRepository.saveSettings(it.toEntity()) }
-//        }
     }
 
     private fun loadSettings() {
@@ -36,7 +33,6 @@ class QuietHoursViewModel(
     val smsTemplate: StateFlow<String> = _smsTemplate
 
     private val _message = MutableStateFlow("")
-    val message: StateFlow<String> = _message
 
     private val _autoSmsEnabled = MutableStateFlow(false)
     val autoSmsEnabled: StateFlow<Boolean> = _autoSmsEnabled

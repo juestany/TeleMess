@@ -28,7 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.telemess.data.db.AppDatabase
 import com.example.telemess.data.repository.SettingsRepository
-import com.example.telemess.domain.model.MissedCallProcessor
+import com.example.telemess.model.MissedCallProcessor
 import com.example.telemess.sms.AndroidSmsSender
 import com.example.telemess.ui.home.HomeScreen
 import com.example.telemess.ui.home.HomeScreenViewModel

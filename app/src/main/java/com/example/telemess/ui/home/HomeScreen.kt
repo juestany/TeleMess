@@ -1,7 +1,6 @@
 package com.example.telemess.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,8 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.telemess.domain.model.IncomingCallEvent
-import com.example.telemess.domain.model.MissedCallProcessor
+import com.example.telemess.model.IncomingCallEvent
+import com.example.telemess.model.MissedCallProcessor
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*

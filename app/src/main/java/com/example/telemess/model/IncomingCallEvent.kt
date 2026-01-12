@@ -1,4 +1,4 @@
-package com.example.telemess.domain.model
+package com.example.telemess.model
 
 data class IncomingCallEvent(
     val phoneNumber: String,

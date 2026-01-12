@@ -7,9 +7,6 @@ import com.example.telemess.ui.home.HomeMissedCallUi
 import kotlinx.coroutines.flow.map
 
 class CallRepository(private val missedCallDAO: MissedCallDAO) {
-    suspend fun insertMissedCall(newMissedCall: MissedCallEntity) {
-        missedCallDAO.insertMissedCall(newMissedCall)
-    }
 
     suspend fun deleteMissedCall(missedCall: MissedCallEntity) {
         missedCallDAO.deleteMissedCall(missedCall)
@@ -19,31 +16,8 @@ class CallRepository(private val missedCallDAO: MissedCallDAO) {
         return missedCallDAO.getMissedCallById(missedCallId)
     }
 
-    suspend fun getUndisplayedCalls(): List<MissedCallEntity> {
-        return missedCallDAO.getUndisplayedCalls()
-    }
-
     suspend fun markCallsAsDisplayed(ids: List<Long>) {
         missedCallDAO.markCallsAsDisplayed(ids)
-    }
-
-    /**
-     * Convenience method used by services (CallScreening / Foreground)
-     */
-    suspend fun saveMissedCall(
-        phoneNumber: String,
-        callType: CallType
-    ) {
-        missedCallDAO.insertMissedCall(
-            MissedCallEntity(
-                id = 0,
-                phoneNumber = phoneNumber,
-                timestamp = System.currentTimeMillis(),
-                callType = callType,
-                smsSent = false,
-                displayedToUser = false
-            )
-        )
     }
 
     // Flow of all calls in descending timestamp order

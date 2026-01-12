@@ -42,16 +42,6 @@ class HomeScreenViewModel(
         callRepository.observeAllMissedCalls()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    // Mark as read in DB
-    fun markAsRead(callId: Int) {
-        viewModelScope.launch {
-            val call = callRepository.getMissedCallById(callId.toLong())
-            if (call != null && !call.displayedToUser) {
-                callRepository.markCallsAsDisplayed(listOf(call.id))
-            }
-        }
-    }
-
     fun deleteCall(callId: Int) {
         viewModelScope.launch {
             val call = callRepository.getMissedCallById(callId.toLong())
